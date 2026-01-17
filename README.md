@@ -2,78 +2,42 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 [![Scraping Framework](https://img.shields.io/badge/library-Selenium%20%2B%20Cloudscraper-orange.svg)](https://github.com/VeNoMouS/cloudscraper)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A robust Python web-scraping engine built to collect Premier League match-level data across multiple seasons from **FBref**. This project is specifically engineered to handle Cloudflare protection, dynamic page loading, and hidden HTML data structures.
+A production-grade Python scraper engineered to extract match-level Premier League statistics. This tool specifically targets **FBref**, overcoming advanced anti-bot protections and non-standard HTML table structures through a multi-layered scraping strategy.
 
 ---
 
 ## 🔍 Project Overview
 
-FBref is a gold mine for football statistics, but it is notoriously difficult to scrape. This project implements a **hybrid scraping architecture** to reliably extract data that standard request-based methods cannot reach.
+Scraping football data from FBref is a significant technical challenge. This project uses a **Hybrid Selenium-Cloudscraper Architecture** to solve common scraping blockers:
 
-### Why this is a challenge:
-1.  **Anti-Bot Protection:** Strict Cloudflare challenges and rate-limiting.
-2.  **JavaScript Rendering:** Dynamic content that requires browser simulation.
-3.  **Hidden Data:** Key statistical tables are often wrapped inside HTML comments `` to bypass standard parsers.
-4.  **Schema Drift:** Column names (e.g., `Sh` vs `Shots`) change between seasons.
+* **Cloudflare Bypassing:** Uses `cloudscraper` to handle V2/V3 challenges.
+* **Dynamic Rendering:** Employs Selenium (headless Chrome) to process JavaScript-heavy standings pages.
+* **Hidden Data Extraction:** Uses Regex to "uncomment" tables hidden within HTML comments (``).
+* **Schema Evolution:** Implements a "Smart Mapping" system to handle column names that change between seasons (e.g., "Shots" vs "Sh").
 
----
 
-## ⚙️ Key Features
-
-* ✅ **Multi-Season Scraping:** Automatic navigation through historical seasons.
-* ✅ **Hybrid System:** Uses **Selenium** for browser simulation and **Cloudscraper** for Cloudflare clearance.
-* ✅ **Comment Parsing:** Custom logic to extract and reconstruct tables hidden within HTML comments.
-* ✅ **Dynamic Mapping:** Keyword-based column detection to handle seasonal naming variations.
-* ✅ **Resilience:** Includes randomized user-agents and exponential backoff retry logic.
-* ✅ **Data Safety:** Automatic backup saving (`.csv`) during execution to prevent data loss.
 
 ---
 
-## 🧠 Engineering Highlights
+## ⚙️ Key Engineering Features
 
-### 1. Defensive Scraping
-To mimic human behavior and avoid IP bans, the script implements:
-* **Randomized Delays:** `time.sleep()` intervals between requests.
-* **User-Agent Rotation:** Prevents fingerprinting by rotating browser headers.
-* **Retry Logic:** Automatically handles failed requests without crashing the entire pipeline.
-
-### 2. The "Hidden Table" Solution
-Most scrapers fail on FBref because data is hidden in comments. This project uses a specialized approach to strip comment tags, allowing BeautifulSoup to "see" and parse the data correctly.
-
-### 3. Loop-Based Crawling Logic
-The scraper follows a production-grade data pipeline:
-1.  **Outer Loop:** Iterates through selected seasons.
-2.  **Middle Loop:** Identifies and visits every team link from the standings table.
-3.  **Inner Loop:** Merges match logs with specific shooting/performance metrics.
+* ✅ **Hybrid Driver Logic:** Selenium handles the navigation and JavaScript rendering, while Cloudscraper handles the high-volume data requests.
+* ✅ **Resilient Networking:** Features exponential backoff retry logic and randomized User-Agent rotation to prevent IP blacklisting.
+* ✅ **Smart Column Matching:** A candidate-based matching system ensures that data is captured even if FBref renames table headers.
+* ✅ **Automated Data Pipeline:** 1. Scrapes league standings for team URLs.
+    2. Navigates to individual team match logs.
+    3. Merges standard match data with advanced shooting metrics.
+* ✅ **Fail-Safe Mechanism:** Includes an **Autosave** feature that updates a partial backup CSV after every team is scraped.
 
 ---
 
-## 🧪 Tech Stack
+## 🧠 Technical Highlights
 
-* **Language:** Python 3.x
-* **Libraries:** * `Pandas`: For data manipulation and CSV export.
-    * `BeautifulSoup4`: For HTML parsing and comment extraction.
-    * `Selenium`: For handling dynamic JavaScript content.
-    * `Cloudscraper`: To bypass Cloudflare V2/V3 protections.
-    * `Webdriver-manager`: For automated Chrome driver handling.
+### 1. Handling "Hidden" HTML
+FBref wraps many performance tables in comments to prevent standard scraping. This project uses a regex-based helper to reconstruct the DOM:
+```python
+def uncomment_tables(html_text):
+    pattern = re.compile(r"")
+    return pattern.sub(lambda m: m.group(1), html_text)
 
----
-
-## 📁 Output Files
-
-| File Name | Description |
-| :--- | :--- |
-| `premier_league_combined.csv` | Final merged dataset containing all scraped match data. |
-| `fbref_partial_backup.csv` | Automatic backup file saved during execution. |
-
----
-
-## ▶️ Getting Started
-
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/yourusername/fbref-scraper.git](https://github.com/yourusername/fbref-scraper.git)
-   cd fbref-scraper
