@@ -41,3 +41,29 @@ def uncomment_tables(html_text):
     pattern = re.compile(r"")
     return pattern.sub(lambda m: m.group(1), html_text)
 
+### 2. Defensive Measures
+To ensure long-running stability, the scraper includes:
+* **Headless Chrome Optimization:** Configured with `--no-sandbox` and `--disable-gpu` for efficient server-side performance.
+* **Request Throttling:** Randomized `sleep` intervals to mimic human browsing behavior.
+
+---
+
+## 🧪 Tech Stack
+
+| Category | Tools |
+| :--- | :--- |
+| **Language** | Python 3.x |
+| **Automation** | Selenium, Webdriver-manager |
+| **Bypass** | Cloudscraper |
+| **Parsing** | BeautifulSoup4, LXML |
+| **Data Analysis** | Pandas, NumPy |
+
+---
+
+## ▶️ Getting Started
+
+### 1. Installation
+```bash
+git clone [https://github.com/yourusername/fbref-scraper.git](https://github.com/yourusername/fbref-scraper.git)
+cd fbref-scraper
+pip install -r requirements.txt
